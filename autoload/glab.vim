@@ -14,7 +14,7 @@ function! glab#CreateMergeRequest(...) abort
     endif
 
     new
-    let currentBranch = system("git branch --show-current")
+    let currentBranch = systemlist("git branch --show-current")[0]
     let text = []
     let text += [ "Source: " .. currentBranch ]
     " most of time you want to merge your changes to main/master
