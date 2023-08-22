@@ -44,3 +44,37 @@ function! glab#SubmitMergeRequest() abort
     echomsg system(mrCommand) 
     q!
 endfunction
+
+function! glab#ShowMergeRequests() abort
+    new
+    %read!glab mr list
+    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)diff, (v)iew"])
+    nnoremap <buffer> <silent> a :call glab#ApproveMergeRequest()<CR>
+    nnoremap <buffer> <silent> r :call glab#RevokeMergeRequest()<CR>
+endfunction
+
+function! s:getMergeRequest()
+    let line = getline(".")
+    let parsedLine = matchlist(line,'!\(\d*\).*(\(.*\)) ← (\(.*\))')
+    let mrNumber = parsedLine[1]
+    let destinationBranch = parsedLine[2]
+    let sourceBranch = parsedLine[3]
+    let mergeRequest = #{
+                \ number: mrNumber,
+                \ sourceBranch: sourceBranch,
+                \ destinationBranch: destinationBranch 
+                \ }
+    return mergeRequest
+endfunction
+
+function! glab#ApproveMergeRequest() abort
+    let mr = s:getMergeRequest()
+    echomsg "Approving " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
+    echomsg system('glab mr approve ' .. mr.number)
+endfunction
+
+function! glab#RevokeMergeRequest() abort
+    let mr = s:getMergeRequest()
+    echomsg "Revoking " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
+    echomsg system('glab mr revoke ' .. mr.number)
+endfunction
