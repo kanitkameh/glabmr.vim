@@ -45,12 +45,20 @@ function! glab#SubmitMergeRequest() abort
     q!
 endfunction
 
-function! glab#ShowMergeRequests() abort
-    new
+function! s:refreshMergeRequestList() abort
+    call deletebufline(bufnr(),'0','$')
     %read!glab mr list
+endfunction
+
+function! glab#ListMergeRequests() abort
+    new
+    call s:refreshMergeRequestList()
     call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)diff, (v)iew"])
     nnoremap <buffer> <silent> a :call glab#ApproveMergeRequest()<CR>
     nnoremap <buffer> <silent> r :call glab#RevokeMergeRequest()<CR>
+    nnoremap <buffer> <silent> c :call glab#CloseMergeRequest()<CR>
+    nnoremap <buffer> <silent> m :call glab#MergeMergeRequest()<CR>
+    nnoremap <buffer> <silent> d :call glab#MergeRequestDiff()<CR>
 endfunction
 
 function! s:getMergeRequest()
@@ -71,10 +79,31 @@ function! glab#ApproveMergeRequest() abort
     let mr = s:getMergeRequest()
     echomsg "Approving " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
     echomsg system('glab mr approve ' .. mr.number)
+    call s:refreshMergeRequestList()
 endfunction
 
 function! glab#RevokeMergeRequest() abort
     let mr = s:getMergeRequest()
     echomsg "Revoking " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
     echomsg system('glab mr revoke ' .. mr.number)
+    call s:refreshMergeRequestList()
+endfunction
+
+function! glab#CloseMergeRequest() abort
+    let mr = s:getMergeRequest()
+    echomsg "Closing " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
+    echomsg system('glab mr close ' .. mr.number)
+    call s:refreshMergeRequestList()
+endfunction
+
+function! glab#MergeMergeRequest() abort
+    let mr = s:getMergeRequest()
+    echomsg "Merge " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
+    echomsg system('glab mr merge ' .. mr.number)
+    call s:refreshMergeRequestList()
+endfunction
+
+function! glab#MergeRequestDiff() abort
+    let mr = s:getMergeRequest()
+    !git diff mr.destinationBranch .. " " .. mr.sourceBranch
 endfunction
