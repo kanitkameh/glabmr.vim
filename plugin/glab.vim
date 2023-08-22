@@ -5,16 +5,19 @@ let g:loaded_glab = 0.1
 let s:keepcpo = &cpo
 set cpo&vim
 
-command -nargs=? -complete=custom,s:gitBranches CreateMergeRequest call glab#CreateMergeRequest(<f-args>)
+command -nargs=? -complete=custom,s:gitBranches MergeRequestCreate call glab#CreateMergeRequest(<f-args>)
 
-command SubmitMergeRequest call glab#SubmitMergeRequest()
+command MergeRequestSubmit call glab#SubmitMergeRequest()
+command MergeRequestList call glab#ListMergeRequests()
 
 " TODO other plugins have it
 command StartDiscussion call glab#StartDiscussion()
 
 " Arguments aren't used
 function s:gitBranches(A,L,P)
-    return system("git branch")
+    let branchLines = systemlist("git branch")
+    call map(branchLines, {_, val -> trim(val)})
+    return branchLines->join("\n")
 endfunction    
 
 let &cpo = s:keepcpo
