@@ -1,4 +1,4 @@
-" StartDiscussion: {{{
+
 function! glab#StartDiscussion() abort
     echo "Starting gitlab discussion"
 endfunction
@@ -53,7 +53,7 @@ endfunction
 function! glab#ListMergeRequests() abort
     new
     call s:refreshMergeRequestList()
-    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)diff, (v)iew"])
+    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (v)iew"])
     nnoremap <buffer> <silent> a :call glab#ApproveMergeRequest()<CR>
     nnoremap <buffer> <silent> r :call glab#RevokeMergeRequest()<CR>
     nnoremap <buffer> <silent> c :call glab#CloseMergeRequest()<CR>
