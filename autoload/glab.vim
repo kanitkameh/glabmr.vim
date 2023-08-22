@@ -46,19 +46,20 @@ function! glab#SubmitMergeRequest() abort
 endfunction
 
 function! s:refreshMergeRequestList() abort
-    call deletebufline(bufnr(),'0','$')
+    call deletebufline(bufnr(),'1','$')
     %read!glab mr list
 endfunction
 
 function! glab#ListMergeRequests() abort
     new
     call s:refreshMergeRequestList()
-    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (v)iew"])
+    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (v)iew, (n)ote"])
     nnoremap <buffer> <silent> a :call glab#ApproveMergeRequest()<CR>
     nnoremap <buffer> <silent> r :call glab#RevokeMergeRequest()<CR>
     nnoremap <buffer> <silent> c :call glab#CloseMergeRequest()<CR>
     nnoremap <buffer> <silent> m :call glab#MergeMergeRequest()<CR>
     nnoremap <buffer> <silent> d :call glab#MergeRequestDiff()<CR>
+    nnoremap <buffer> <silent> n :call glab#NoteMergeRequest()<CR>
 endfunction
 
 function! s:getMergeRequest()
@@ -107,3 +108,19 @@ function! glab#MergeRequestDiff() abort
     let mr = s:getMergeRequest()
     !git diff mr.destinationBranch .. " " .. mr.sourceBranch
 endfunction
+
+function! glab#NoteMergeRequest() abort
+    let mr = s:getMergeRequest()
+    function! s:NoteBufferOnQuit() abort closure
+        echomsg mr
+        let fileContent = getline('0','$')->join()->shellescape()
+        echomsg system('glab mr note ' .. mr.number .. ' --message ' .. fileContent)
+    endfunction
+
+    echomsg "Note " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
+    new
+    call setline('0','Enter comment here')
+    command -buffer MergeRequestNote call s:NoteBufferOnQuit()
+endfunction
+
+" TODO doesn't work
