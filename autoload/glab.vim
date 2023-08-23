@@ -59,6 +59,7 @@ function! glab#ListMergeRequests() abort
     nnoremap <buffer> <silent> c :call glab#CloseMergeRequest()<CR>
     nnoremap <buffer> <silent> m :call glab#MergeMergeRequest()<CR>
     nnoremap <buffer> <silent> d :call glab#MergeRequestDiff()<CR>
+    nnoremap <buffer> <silent> v :call glab#MergeRequestView()<CR>
     nnoremap <buffer> <silent> n :call glab#NoteMergeRequest()<CR>
 endfunction
 
@@ -106,7 +107,8 @@ endfunction
 
 function! glab#MergeRequestDiff() abort
     let mr = s:getMergeRequest()
-    !git diff mr.destinationBranch .. " " .. mr.sourceBranch
+    exe 'silent !git diff '.. mr.destinationBranch .. " " .. mr.sourceBranch
+    redraw! " silent ! requires a redraw
 endfunction
 
 function! glab#NoteMergeRequest() abort
@@ -122,5 +124,8 @@ function! glab#NoteMergeRequest() abort
     call setline('0','Enter comment here')
     command -buffer MergeRequestNote call s:NoteBufferOnQuit()
 endfunction
-
-" TODO doesn't work
+function! glab#MergeRequestView() abort
+    let mergeRequest = s:getMergeRequest()
+    exe 'silent !glab mr view ' ..  mergeRequest.number
+    redraw! " silent ! requires a redraw
+endfunction
