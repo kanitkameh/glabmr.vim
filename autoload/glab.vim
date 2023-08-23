@@ -53,12 +53,13 @@ endfunction
 function! glab#ListMergeRequests() abort
     new
     call s:refreshMergeRequestList()
-    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (v)iew, (n)ote"])
+    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (gd)iff file name, (v)iew, (n)ote"])
     nnoremap <buffer> <silent> a :call glab#ApproveMergeRequest()<CR>
     nnoremap <buffer> <silent> r :call glab#RevokeMergeRequest()<CR>
     nnoremap <buffer> <silent> c :call glab#CloseMergeRequest()<CR>
     nnoremap <buffer> <silent> m :call glab#MergeMergeRequest()<CR>
     nnoremap <buffer> <silent> d :call glab#MergeRequestDiff()<CR>
+    nnoremap <buffer> <silent> gd :call glab#MergeRequestFileNameDiff()<CR>
     nnoremap <buffer> <silent> v :call glab#MergeRequestView()<CR>
     nnoremap <buffer> <silent> n :call glab#NoteMergeRequest()<CR>
 endfunction
@@ -108,6 +109,14 @@ endfunction
 function! glab#MergeRequestDiff() abort
     let mr = s:getMergeRequest()
     exe 'silent !git diff '.. mr.destinationBranch .. " " .. mr.sourceBranch
+    redraw! " silent ! requires a redraw
+endfunction
+ 
+function! glab#MergeRequestFileNameDiff() abort
+    let mr = s:getMergeRequest()
+    new
+    set bufhidden=hide
+    exe '%read!git diff '.. mr.destinationBranch .. " " .. mr.sourceBranch .. ' --name-status'
     redraw! " silent ! requires a redraw
 endfunction
 
