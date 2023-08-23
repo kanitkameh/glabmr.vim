@@ -1,9 +1,3 @@
-
-function! glab#StartDiscussion() abort
-    echo "Starting gitlab discussion"
-endfunction
-" }}}
-
 " Creates the buffer where you enter data for the merge request
 function! glab#CreateMergeRequest(...) abort
     if a:0 > 0
@@ -22,6 +16,8 @@ function! glab#CreateMergeRequest(...) abort
     let text += [ "Title: " .. "Add title here"]
     let text += [ "Description: " .. "Add description here"]
     call append(0,text)
+
+    command -buffer MergeRequestSubmit call glab#SubmitMergeRequest()
 endfunction
 
 function! glab#SubmitMergeRequest() abort

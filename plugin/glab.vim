@@ -7,11 +7,7 @@ set cpo&vim
 
 command -nargs=? -complete=custom,s:gitBranches MergeRequestCreate call glab#CreateMergeRequest(<f-args>)
 
-command MergeRequestSubmit call glab#SubmitMergeRequest()
 command MergeRequestList call glab#ListMergeRequests()
-
-" TODO other plugins have it
-command StartDiscussion call glab#StartDiscussion()
 
 " Arguments aren't used
 function s:gitBranches(A,L,P)
