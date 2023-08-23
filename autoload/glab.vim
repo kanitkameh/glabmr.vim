@@ -1,3 +1,15 @@
+function! s:completeGitBranches(findstart,base) abort
+    if(a:findstart)
+        let line = getline('.')
+        let column = match(line,'Target: \zs.\ze')
+        return column
+    else
+        let branchLines = systemlist("git branch")
+        call map(branchLines, {_, val -> trim(val)})
+        return filter(branchLines, {_, val -> match(val, a:base) != -1})
+    endif
+endfunction    
+
 " Creates the buffer where you enter data for the merge request
 function! glab#CreateMergeRequest(...) abort
     if a:0 > 0
@@ -18,6 +30,7 @@ function! glab#CreateMergeRequest(...) abort
     call append(0,text)
 
     command -buffer MergeRequestSubmit call glab#SubmitMergeRequest()
+    set completefunc=s:completeGitBranches
 endfunction
 
 function! glab#SubmitMergeRequest() abort
