@@ -1,7 +1,63 @@
 *glabmr.txt*                                  Work with merge requests in Gitlab 
 
 ============================================================================== 
-CONTENTS                                                                *glabmr*
+CONTENTS                                                              *glabmr*
     Installation...........................: |glabmr-installation|
     Usage..................................: |glabmr-usage|
 ==============================================================================
+INSTALLATION                                             *glabmr-installation*
+
+You can install this plugin by using a plugin manager like Vundle. 
+You can install it by cloning the repository.
+>
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+<
+After cloning it add following to your ~/.vimrc:
+>
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'kanitkameh/glabmr'
+call vundle#end()            " required
+<
+
+
+Alternatively you can manually clone this plugin 
+and add it to your runtime path.
+>
+git clone git@gitlab.com:kanitkameh/glab.vim.git ~/.vim/bundle/glabmr.vim
+<
+Then add this to your ~/.vimrc:
+>
+set rtp+=~/.vim/bundle/glabmr.vim
+<
+
+After the plugin is added in your vim runtime path 
+you must install gitlab cli tool called 'glab'. 
+Installation instructions here:
+https://gitlab.com/gitlab-org/cli
+After installin the plugin you must login in your account:
+>
+glab auth login
+<
+Now you can use glabmr. Enjoy!
+
+==============================================================================
+USAGE                                                           *glabmr-usage*
+
+The plugin provides the following commands:
+
+MergeRequestCreate                                        *MergeRequestCreate*
+Opens a new buffer for creating merge requests. 
+You can pass it as parameter the target branch. In the new buffer you 
+get access to the  |MergeRequestSubmit| command 
+for submitting the request when you are done.
+
+MergeRequestSubmit                                        *MergeRequestSubmit*
+Submits the merge request with the data in the buffer.
+
+MergeRequestList                                            *MergeRequestList*
+Opens a new buffer with a list of open merge requests.
+The available actions there are listed as characters in brackets.
+You just type the following character.
+
+vim:tw=78:sw=4:ft=help:norl:
