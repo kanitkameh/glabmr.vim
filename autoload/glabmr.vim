@@ -11,7 +11,7 @@ function! s:completeGitBranches(findstart,base) abort
 endfunction    
 
 " Creates the buffer where you enter data for the merge request
-function! glab#CreateMergeRequest(...) abort
+function! glabmr#CreateMergeRequest(...) abort
     if a:0 > 0
         let targetBranch = a:1
     else
@@ -29,12 +29,12 @@ function! glab#CreateMergeRequest(...) abort
     let text += [ "Description: " .. "Add description here"]
     call append(0,text)
 
-    command -buffer MergeRequestSubmit call glab#SubmitMergeRequest()
+    command -buffer MergeRequestSubmit call glabmr#SubmitMergeRequest()
     set completefunc=s:completeGitBranches
-    set filetype=mergerequest
+    set filetype=glabmr
 endfunction
 
-function! glab#SubmitMergeRequest() abort
+function! glabmr#SubmitMergeRequest() abort
     let sourceBranchLine = getline(search('Source: '))
     let sourceBranch = matchstr(sourceBranchLine, 'Source: \zs.*.\ze$')
     let targetBranchLine = getline(search('Target: '))
@@ -60,18 +60,18 @@ function! s:refreshMergeRequestList() abort
     %read!glab mr list
 endfunction
 
-function! glab#ListMergeRequests() abort
+function! glabmr#ListMergeRequests() abort
     new
     call s:refreshMergeRequestList()
     call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (gd)iff file name, (v)iew, (n)ote"])
-    nnoremap <buffer> <silent> a :call glab#ApproveMergeRequest()<CR>
-    nnoremap <buffer> <silent> r :call glab#RevokeMergeRequest()<CR>
-    nnoremap <buffer> <silent> c :call glab#CloseMergeRequest()<CR>
-    nnoremap <buffer> <silent> m :call glab#MergeMergeRequest()<CR>
-    nnoremap <buffer> <silent> d :call glab#MergeRequestDiff()<CR>
-    nnoremap <buffer> <silent> gd :call glab#MergeRequestFileNameDiff()<CR>
-    nnoremap <buffer> <silent> v :call glab#MergeRequestView()<CR>
-    nnoremap <buffer> <silent> n :call glab#NoteMergeRequest()<CR>
+    nnoremap <buffer> <silent> a :call glabmr#ApproveMergeRequest()<CR>
+    nnoremap <buffer> <silent> r :call glabmr#RevokeMergeRequest()<CR>
+    nnoremap <buffer> <silent> c :call glabmr#CloseMergeRequest()<CR>
+    nnoremap <buffer> <silent> m :call glabmr#MergeMergeRequest()<CR>
+    nnoremap <buffer> <silent> d :call glabmr#MergeRequestDiff()<CR>
+    nnoremap <buffer> <silent> gd :call glabmr#MergeRequestFileNameDiff()<CR>
+    nnoremap <buffer> <silent> v :call glabmr#MergeRequestView()<CR>
+    nnoremap <buffer> <silent> n :call glabmr#NoteMergeRequest()<CR>
 endfunction
 
 function! s:getMergeRequest()
@@ -88,41 +88,41 @@ function! s:getMergeRequest()
     return mergeRequest
 endfunction
 
-function! glab#ApproveMergeRequest() abort
+function! glabmr#ApproveMergeRequest() abort
     let mr = s:getMergeRequest()
     echomsg "Approving " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
     echomsg system('glab mr approve ' .. mr.number)
     call s:refreshMergeRequestList()
 endfunction
 
-function! glab#RevokeMergeRequest() abort
+function! glabmr#RevokeMergeRequest() abort
     let mr = s:getMergeRequest()
     echomsg "Revoking " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
     echomsg system('glab mr revoke ' .. mr.number)
     call s:refreshMergeRequestList()
 endfunction
 
-function! glab#CloseMergeRequest() abort
+function! glabmr#CloseMergeRequest() abort
     let mr = s:getMergeRequest()
     echomsg "Closing " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
     echomsg system('glab mr close ' .. mr.number)
     call s:refreshMergeRequestList()
 endfunction
 
-function! glab#MergeMergeRequest() abort
+function! glabmr#MergeMergeRequest() abort
     let mr = s:getMergeRequest()
     echomsg "Merge " .. mr.number .. " " mr.destinationBranch .. " ← " .. mr.sourceBranch
     echomsg system('glab mr merge ' .. mr.number)
     call s:refreshMergeRequestList()
 endfunction
 
-function! glab#MergeRequestDiff() abort
+function! glabmr#MergeRequestDiff() abort
     let mr = s:getMergeRequest()
     exe 'silent !git diff '.. mr.destinationBranch .. " " .. mr.sourceBranch
     redraw! " silent ! requires a redraw
 endfunction
  
-function! glab#MergeRequestFileNameDiff() abort
+function! glabmr#MergeRequestFileNameDiff() abort
     let mr = s:getMergeRequest()
     new
     set bufhidden=hide
@@ -130,7 +130,7 @@ function! glab#MergeRequestFileNameDiff() abort
     redraw! " silent ! requires a redraw
 endfunction
 
-function! glab#NoteMergeRequest() abort
+function! glabmr#NoteMergeRequest() abort
     let mr = s:getMergeRequest()
     function! s:NoteBufferOnQuit() abort closure
         echomsg mr
@@ -143,7 +143,7 @@ function! glab#NoteMergeRequest() abort
     call setline('0','Enter comment here')
     command -buffer MergeRequestNote call s:NoteBufferOnQuit()
 endfunction
-function! glab#MergeRequestView() abort
+function! glabmr#MergeRequestView() abort
     let mergeRequest = s:getMergeRequest()
     exe 'silent !glab mr view ' ..  mergeRequest.number
     redraw! " silent ! requires a redraw

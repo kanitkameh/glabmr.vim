@@ -1,13 +1,13 @@
-if exists('g:loaded_glab') || &cp
+if exists('g:loaded_glabmr') || &cp
     finish
 endif
-let g:loaded_glab = 0.1
+let g:loaded_glabmr = 0.1
 let s:keepcpo = &cpo
 set cpo&vim
 
-command -nargs=? -complete=custom,s:gitBranches MergeRequestCreate call glab#CreateMergeRequest(<f-args>)
+command -nargs=? -complete=custom,s:gitBranches MergeRequestCreate call glabmr#CreateMergeRequest(<f-args>)
 
-command MergeRequestList call glab#ListMergeRequests()
+command MergeRequestList call glabmr#ListMergeRequests()
 
 " Arguments aren't used
 function s:gitBranches(A,L,P)

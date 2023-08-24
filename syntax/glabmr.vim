@@ -8,7 +8,7 @@ if exists("b:current_syntax")
   finish
 endif
 
-let b:current_syntax="mergerequest"
+let b:current_syntax="glabmr"
 
 syntax match mergerequestBranch /Target:/  
 syntax match mergerequestBranch /Source:/  
