@@ -31,6 +31,7 @@ function! glab#CreateMergeRequest(...) abort
 
     command -buffer MergeRequestSubmit call glab#SubmitMergeRequest()
     set completefunc=s:completeGitBranches
+    set filetype=mergerequest
 endfunction
 
 function! glab#SubmitMergeRequest() abort
