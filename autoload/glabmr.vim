@@ -59,12 +59,12 @@ function! s:refreshMergeRequestList() abort
     call deletebufline(bufnr(),'1','$')
     silent %read!glab mr list
     redraw!
+    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (gd)iff file name, (v)iew, (n)ote"])
 endfunction
 
 function! glabmr#ListMergeRequests() abort
     new
     call s:refreshMergeRequestList()
-    call append("$",["(a)pprove, (r)evoke, (c)lose, (m)erge, (d)iff, (gd)iff file name, (v)iew, (n)ote"])
     nnoremap <buffer> <silent> a :call glabmr#ApproveMergeRequest()<CR>
     nnoremap <buffer> <silent> r :call glabmr#RevokeMergeRequest()<CR>
     nnoremap <buffer> <silent> c :call glabmr#CloseMergeRequest()<CR>
