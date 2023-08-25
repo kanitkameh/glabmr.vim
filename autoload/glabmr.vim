@@ -57,7 +57,8 @@ endfunction
 
 function! s:refreshMergeRequestList() abort
     call deletebufline(bufnr(),'1','$')
-    %read!glab mr list
+    silent %read!glab mr list
+    redraw!
 endfunction
 
 function! glabmr#ListMergeRequests() abort
