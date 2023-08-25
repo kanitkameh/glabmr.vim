@@ -60,4 +60,9 @@ Opens a new buffer with a list of open merge requests.
 The available actions there are listed as characters in brackets.
 You just type the following character.
 
+MergeRequestNote                                            *MergeRequestNote*
+When you press n to note merge request in the merge request list
+you are presented with an empty buffer.
+Enter your note in the buffer and when you are done call :MergeRequestNote.
+
 vim:tw=78:sw=4:ft=help:norl:
