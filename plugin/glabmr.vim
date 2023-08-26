@@ -11,8 +11,8 @@ command MergeRequestList call glabmr#ListMergeRequests()
 
 " Arguments aren't used
 function s:gitBranches(A,L,P)
-    let branchLines = systemlist("git branch")
-    call map(branchLines, {_, val -> trim(val)})
+    let branchLines = systemlist("git branch")              
+    call map(branchLines, {_, val -> trim(substitute(val, "^*", "", ""))})
     return branchLines->join("\n")
 endfunction    
 
