@@ -11,25 +11,21 @@ You can install this plugin by using a plugin manager like Vundle.
 You can install it by cloning the repository.
 >
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-<
 After cloning it add following to your ~/.vimrc:
 >
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'kanitkameh/glabmr'
-call vundle#end()            " required
+    set rtp+=~/.vim/bundle/Vundle.vim
+    call vundle#begin()
+    Plugin 'kanitkameh/glabmr'
+    call vundle#end()            " required
 <
-
-
 Alternatively you can manually clone this plugin 
 and add it to your runtime path.
 >
-git clone git@gitlab.com:kanitkameh/glab.vim.git ~/.vim/bundle/glabmr.vim
+    git clone git@gitlab.com:kanitkameh/glab.vim.git ~/.vim/bundle/glabmr.vim
 <
 Then add this to your ~/.vimrc:
 >
-set rtp+=~/.vim/bundle/glabmr.vim
-<
+    set rtp+=~/.vim/bundle/glabmr.vim
 
 After the plugin is added in your vim runtime path 
 you must install gitlab cli tool called 'glab'. 
@@ -37,7 +33,7 @@ Installation instructions here:
 https://gitlab.com/gitlab-org/cli
 After installin the plugin you must login in your account:
 >
-glab auth login
+    glab auth login
 <
 Now you can use glabmr. Enjoy!
 
