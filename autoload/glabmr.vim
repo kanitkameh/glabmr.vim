@@ -1,7 +1,7 @@
 function! s:completeGitBranches(findstart,base) abort
     if(a:findstart)
         let line = getline('.')
-        let column = match(line,'Target: \zs.\ze')
+        let column = match(line, '^\(Target\|Source\): \zs')
         return column
     else
         let branchLines = systemlist("git branch")
@@ -19,14 +19,17 @@ function! glabmr#CreateMergeRequest(...) abort
         let targetBranch = "main"
     endif
 
-    new
+    tabnew
     let currentBranch = systemlist("git branch --show-current")[0]
     let text = []
     let text += [ "Source: " .. currentBranch ]
     " most of time you want to merge your changes to main/master
     let text += [ "Target: " .. targetBranch ] 
     let text += [ "Title: " .. "Add title here"]
-    let text += [ "Description: " .. "Add description here"]
+    "Description should always be last because the
+    "glabmr#SubmitMergeRequest parses it until the end of buffer
+    let text += [ "Description:" ]
+    let text += [ "Add (multi-line) description starting from here" ]
     call append(0,text)
 
     command -buffer MergeRequestSubmit call glabmr#SubmitMergeRequest()
@@ -41,8 +44,8 @@ function! glabmr#SubmitMergeRequest() abort
     let targetBranch = matchstr(targetBranchLine, 'Target: \zs.*.\ze$')
     let titleLine = getline(search('Title: '))
     let title = matchstr(titleLine, 'Title: \zs.*.\ze$')
-    let descriptionLine = getline(search('Description: '))
-    let description = matchstr(descriptionLine, 'Description: \zs.*.\ze$')
+    let descriptionLines = getline(search('Description:') + 1, '$')
+    let description = descriptionLines->join("\n") 
 
     let mrCommand = 'glab mr create' ..
                 \ ' -s ' .. shellescape(sourceBranch) .. 
