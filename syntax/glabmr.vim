@@ -13,6 +13,7 @@ let b:current_syntax="glabmr"
 syntax match mergerequestBranch /Target:/  
 syntax match mergerequestBranch /Source:/  
 syntax match mergerequestTitle /Title:/  
+syntax match mergerequestTitle /Assignee:/  
 syntax match mergerequestDescription /Description:/  
 
 
