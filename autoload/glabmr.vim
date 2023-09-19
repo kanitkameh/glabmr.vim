@@ -15,7 +15,7 @@ function! glabmr#CreateMergeRequest(...) abort
     if a:0 > 0
         let targetBranch = a:1
     else
-        " TODO search 
+        " TODO get default branch from glab? 
         let targetBranch = "main"
     endif
 
@@ -26,6 +26,8 @@ function! glabmr#CreateMergeRequest(...) abort
     " most of time you want to merge your changes to main/master
     let text += [ "Target: " .. targetBranch ] 
     let text += [ "Title: " .. "Add title here"]
+    " Getting the first username
+    let text += [ "Assignee: " .. s:getLoggedUsernames()[0]]
     "Description should always be last because the
     "glabmr#SubmitMergeRequest parses it until the end of buffer
     let text += [ "Description:" ]
@@ -37,20 +39,30 @@ function! glabmr#CreateMergeRequest(...) abort
     set filetype=glabmr
 endfunction
 
+function! s:getSingleLineMergeRequestAttribute(attribute) abort
+    let attributeLine = getline(search(a:attribute .. ': '))
+    let attributeValue = matchstr(attributeLine, a:attribute .. ': \zs.*.\ze$')
+    return attributeValue
+endfunction
+
+function! s:getMultiLineMergeRequestAttribute(attribute) abort
+    let attributeLines = getline(search(a:attribute .. ':') + 1, '$')
+    let attributeValue = attributeLines->join("\n") 
+    return attributeValue
+endfunction
+
 function! glabmr#SubmitMergeRequest() abort
-    let sourceBranchLine = getline(search('Source: '))
-    let sourceBranch = matchstr(sourceBranchLine, 'Source: \zs.*.\ze$')
-    let targetBranchLine = getline(search('Target: '))
-    let targetBranch = matchstr(targetBranchLine, 'Target: \zs.*.\ze$')
-    let titleLine = getline(search('Title: '))
-    let title = matchstr(titleLine, 'Title: \zs.*.\ze$')
-    let descriptionLines = getline(search('Description:') + 1, '$')
-    let description = descriptionLines->join("\n") 
+    let sourceBranch = s:getSingleLineMergeRequestAttribute('Source')
+    let targetBranch = s:getSingleLineMergeRequestAttribute('Target')
+    let title = s:getSingleLineMergeRequestAttribute('Title')
+    let assignee = s:getSingleLineMergeRequestAttribute('Assignee')
+    let description = s:getMultiLineMergeRequestAttribute('Description')
 
     let mrCommand = 'glab mr create' ..
                 \ ' -s ' .. shellescape(sourceBranch) .. 
                 \ ' -b ' .. shellescape(targetBranch) ..
                 \ ' -t ' .. shellescape(title) ..
+                \ ' -a ' .. shellescape(assignee) ..
                 \ ' -d ' .. shellescape(description) ..
                 \ ' --yes' | "Skip submission confirmation
     echomsg mrCommand
@@ -131,7 +143,11 @@ function! glabmr#MergeRequestFileNameDiff() abort
     new
     set bufhidden=hide
     exe '%read!git diff '.. mr.destinationBranch .. " " .. mr.sourceBranch .. ' --name-status'
+    call append(0, "gf, <c-w>f and <c-w>gf open the files in git diff split")
     redraw! " silent ! requires a redraw
+    execute 'nnoremap <buffer> gf gf:Gvdiffsplit ' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
+    execute 'nnoremap <buffer> <c-w>f <c-w>f:Gvdiffsplit ' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
+    execute 'nnoremap <buffer> <c-w>gf <c-w>gf:Gvdiffsplit ' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
 endfunction
 
 function! glabmr#NoteMergeRequest() abort
@@ -147,8 +163,16 @@ function! glabmr#NoteMergeRequest() abort
     call setline('0','Enter comment here')
     command -buffer MergeRequestNote call s:NoteBufferOnQuit()
 endfunction
+
 function! glabmr#MergeRequestView() abort
     let mergeRequest = s:getMergeRequest()
     exe 'silent !glab mr view ' ..  mergeRequest.number
     redraw! " silent ! requires a redraw
+endfunction
+
+function! s:getLoggedUsernames()
+    "the logged user info is outputted on stdout this forwarding it to stdin
+    let loggedLines = systemlist("glab auth status 2>&1 \| grep Logged") 
+    let usernames = loggedLines->map({idx, line -> matchstr(line, 'as \zs.*.\ze (')})
+    return usernames
 endfunction
