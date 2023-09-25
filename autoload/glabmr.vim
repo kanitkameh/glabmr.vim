@@ -142,7 +142,7 @@ function! glabmr#MergeRequestFileNameDiff() abort
     let mr = s:getMergeRequest()
     new
     set bufhidden=hide
-    exe '%read!git diff '.. mr.destinationBranch .. " " .. mr.sourceBranch .. ' --name-status'
+    exe '%read!git diff '.. mr.destinationBranch .. "..." .. mr.sourceBranch .. ' --name-status'
     call append(0, "gf, <c-w>f and <c-w>gf open the files in git diff split")
     redraw! " silent ! requires a redraw
     execute 'nnoremap <buffer> gf gf:Gvdiffsplit ' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
