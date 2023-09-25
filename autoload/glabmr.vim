@@ -134,6 +134,7 @@ endfunction
 
 function! glabmr#MergeRequestDiff() abort
     let mr = s:getMergeRequest()
+    !git fetch
     exe 'silent !git diff '.. mr.destinationBranch .. " " .. mr.sourceBranch
     redraw! " silent ! requires a redraw
 endfunction
@@ -142,12 +143,17 @@ function! glabmr#MergeRequestFileNameDiff() abort
     let mr = s:getMergeRequest()
     new
     set bufhidden=hide
+    !git fetch
     exe '%read!git diff '.. mr.destinationBranch .. "..." .. mr.sourceBranch .. ' --name-status'
     call append(0, "gf, <c-w>f and <c-w>gf open the files in git diff split")
     redraw! " silent ! requires a redraw
-    execute 'nnoremap <buffer> gf gf:Gvdiffsplit ' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
-    execute 'nnoremap <buffer> <c-w>f <c-w>f:Gvdiffsplit ' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
-    execute 'nnoremap <buffer> <c-w>gf <c-w>gf:Gvdiffsplit ' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
+    " TODO this may need configuration code changes if 'origin' isn't the gitlab
+    " remote
+    
+    let destinationAndSourceBranches = 'origin/' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
+    execute 'nnoremap <buffer> gf gf:Gvdiffsplit ' .. destinationAndSourceBranches
+    execute 'nnoremap <buffer> <c-w>f <c-w>f:Gvdiffsplit ' .. destinationAndSourceBranches
+    execute 'nnoremap <buffer> <c-w>gf <c-w>gf:Gvdiffsplit ' .. destinationAndSourceBranches
 endfunction
 
 function! glabmr#NoteMergeRequest() abort
