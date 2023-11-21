@@ -94,7 +94,8 @@ function! s:getMergeRequest()
     let line = getline(".")
     let parsedLine = matchlist(line,'!\(\d*\).*(\(.*\)) ← (\(.*\))')
     let mrNumber = parsedLine[1]
-    let destinationBranch = parsedLine[2]
+    " TODO this may need configuration code changes if 'origin' isn't the gitlab remote
+    let destinationBranch = 'origin/' .. parsedLine[2]
     let sourceBranch = parsedLine[3]
     let mergeRequest = #{
                 \ number: mrNumber,
@@ -147,10 +148,8 @@ function! glabmr#MergeRequestFileNameDiff() abort
     exe '%read!git diff '.. mr.destinationBranch .. "..." .. mr.sourceBranch .. ' --name-status'
     call append(0, "gf, <c-w>f and <c-w>gf open the files in git diff split")
     redraw! " silent ! requires a redraw
-    " TODO this may need configuration code changes if 'origin' isn't the gitlab
-    " remote
     
-    let destinationAndSourceBranches = 'origin/' .. mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
+    let destinationAndSourceBranches = mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
     execute 'nnoremap <buffer> gf gf:Gvdiffsplit ' .. destinationAndSourceBranches
     execute 'nnoremap <buffer> <c-w>f <c-w>f:Gvdiffsplit ' .. destinationAndSourceBranches
     execute 'nnoremap <buffer> <c-w>gf <c-w>gf:Gvdiffsplit ' .. destinationAndSourceBranches
