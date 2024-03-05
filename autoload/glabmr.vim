@@ -150,9 +150,10 @@ function! glabmr#MergeRequestFileNameDiff() abort
     redraw! " silent ! requires a redraw
     
     let destinationAndSourceBranches = mr.destinationBranch .. '...' .. mr.sourceBranch .. ':%<CR>'
-    execute 'nnoremap <buffer> gf gf:Gvdiffsplit ' .. destinationAndSourceBranches
-    execute 'nnoremap <buffer> <c-w>f <c-w>f:Gvdiffsplit ' .. destinationAndSourceBranches
-    execute 'nnoremap <buffer> <c-w>gf <c-w>gf:Gvdiffsplit ' .. destinationAndSourceBranches
+    let focusOnSourceWindow = '<C-w>l'
+    execute 'nnoremap <buffer> gf gf:Gvdiffsplit ' .. destinationAndSourceBranches .. '<CR>' .. focusOnSourceWindow
+    execute 'nnoremap <buffer> <c-w>f <c-w>f:Gvdiffsplit ' .. destinationAndSourceBranches .. '<CR>' .. focusOnSourceWindow
+    execute 'nnoremap <buffer> <c-w>gf <c-w>gf:Gvdiffsplit ' .. destinationAndSourceBranches .. '<CR>' .. focusOnSourceWindow
 endfunction
 
 function! glabmr#NoteMergeRequest() abort
@@ -171,7 +172,8 @@ endfunction
 
 function! glabmr#MergeRequestView() abort
     let mergeRequest = s:getMergeRequest()
-    exe 'silent !glab mr view ' ..  mergeRequest.number
+    new
+    exe 'silent %read!glab mr view ' ..  mergeRequest.number
     redraw! " silent ! requires a redraw
 endfunction
 
