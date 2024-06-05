@@ -64,7 +64,10 @@ function! glabmr#SubmitMergeRequest() abort
                 \ ' -t ' .. shellescape(title) ..
                 \ ' -a ' .. shellescape(assignee) ..
                 \ ' -d ' .. shellescape(description) ..
-                \ ' --yes' | "Skip submission confirmation
+                \ ' --remove-source-branch' ..
+                \ ' --squash-before-merge' ..
+                \ ' --yes' "Skip submission confirmation
+
     echomsg mrCommand
     echomsg system(mrCommand) 
     q!
