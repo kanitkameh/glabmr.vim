@@ -26,7 +26,7 @@ and add it to your runtime path.
 Then add this to your ~/.vimrc:
 >
     set rtp+=~/.vim/bundle/glabmr.vim
-
+<
 After the plugin is added in your vim runtime path 
 you must install gitlab cli tool called 'glab'. 
 Installation instructions here:
