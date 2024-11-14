@@ -15,8 +15,7 @@ function! glabmr#CreateMergeRequest(...) abort
     if a:0 > 0
         let targetBranch = a:1
     else
-        " TODO get default branch from glab? 
-        let targetBranch = "main"
+        let targetBranch = systemlist("glab repo view --output json | jq -r .default_branch")[0]
     endif
 
     tabnew
